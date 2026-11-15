@@ -1,0 +1,13 @@
+{
+  "name": "adhd-combo",
+  "version": "1.0.0",
+  "description": "Always-on bundle: i-have-adhd (reply shape), caveman (terse wording) and ponytail (minimal, safe code), with one rule set for their clashes.",
+  "author": {
+    "name": "alanlee7219",
+    "url": "https://github.com/alanlee7219"
+  },
+  "homepage": "https://github.com/alanlee7219/adhd_combo_skillset",
+  "repository": "https://github.com/alanlee7219/adhd_combo_skillset",
+  "license": "MIT AND Apache-2.0",
+  "keywords": ["adhd", "caveman", "ponytail", "output-style", "always-on"]
+}
