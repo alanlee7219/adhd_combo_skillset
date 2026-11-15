@@ -27,6 +27,20 @@ Start a new session. All three are on.
 - No Node.js needed. The hooks are POSIX `sh`; on Windows they need Git Bash.
 - Uninstall the upstream caveman, ponytail and i-have-adhd plugins first, or their rules load twice.
 
+## Cloud sessions (claude.ai/code, the Claude app's Code tab, scheduled tasks)
+
+Cloud sessions don't install plugins that a repo declares in `.claude/settings.json`. They do load the repo's `.claude/skills/` and the hooks in its `.claude/settings.json` (sessions with one repository only). So copy adhd-combo into each repo:
+
+```
+python3 scripts/add-to-repo.py /path/to/your-repo
+```
+
+Then commit the repo's `.claude/` and push.
+
+- Run it again to update the copy. Add `--remove` to take it out.
+- Your other skills and settings stay as they are. Same-named skills are never overwritten.
+- If the plugin is also installed on your machine, the repo copy stays quiet, so the rules load once.
+
 ## Switches
 
 | Say or type | Effect |
@@ -43,7 +57,7 @@ Also bundled: `/caveman-commit`, `/caveman-review`, `/ponytail-review`, `/ponyta
 
 - `hooks/hooks.json` runs `hooks/inject.sh` on SessionStart (startup, resume, clear, compact). One hook per skill keeps each output under Claude Code's 10,000-character limit per hook.
 - Subagents get caveman and ponytail through SubagentStart.
-- `sh tests/test-hooks.sh` checks every hook output.
+- `sh tests/test-hooks.sh` checks every hook output. `python3 tests/test_add_to_repo.py` checks the repo copy.
 
 ## Not included
 
@@ -62,3 +76,4 @@ Everything under `skills/` except `skills/adhd-combo/` is an unmodified copy of 
 1. 在 Claude Code 分兩次輸入上面兩行安裝指令
 2. 開新 session
 3. 說 `normal mode` 全部關；打 `/adhd-combo` 全部重開
+4. 雲端 session（網頁、Claude app 的 Code、排程）：用 `scripts/add-to-repo.py` 把它複製入每個 repo 的 `.claude/`

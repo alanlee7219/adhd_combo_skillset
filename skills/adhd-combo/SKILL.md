@@ -10,7 +10,7 @@ argument-hint: "[status]"
 
 # adhd-combo
 
-Three bundled skills are ON for the whole session: **i-have-adhd**, **caveman** and **ponytail**. The plugin loads their full rules next to this text. Their own "switch on" commands matter only after a switch-off.
+Three bundled skills are ON for the whole session: **i-have-adhd**, **caveman** and **ponytail**. adhd-combo loads their full rules next to this text. Their own "switch on" commands matter only after a switch-off.
 
 ## Who decides what
 

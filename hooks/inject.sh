@@ -3,19 +3,27 @@
 # the model's context. hooks.json calls this once per skill, so each output
 # stays under Claude Code's 10,000-character limit per hook command.
 #
-# Usage: inject.sh session|subagent <skill>
+# Usage: inject.sh session|subagent <skill> [project]
 #   session   plain text on stdout (SessionStart adds it to context)
 #   subagent  JSON with hookSpecificOutput.additionalContext (SubagentStart)
+#   project   this copy lives in a repo's .claude/ (scripts/add-to-repo.py);
+#             stay quiet when the plugin is installed, so rules load once
 #
 # Never blocks a session: any failure exits 0 with no output.
 
 event=$1
 skill=$2
+scope=${3:-plugin}
 
 case $skill in
   adhd-combo | i-have-adhd | caveman | ponytail) ;;
   *) exit 0 ;;
 esac
+
+if [ "$scope" = project ]; then
+  plugins=${CLAUDE_CODE_PLUGIN_CACHE_DIR:-${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins}
+  grep -q '"adhd-combo@adhd-combo"' "$plugins/installed_plugins.json" 2> /dev/null && exit 0
+fi
 
 # Find skills/ from this script's own path, not from an env var.
 dir=$(dirname -- "$0") || exit 0

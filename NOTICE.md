@@ -23,4 +23,4 @@ adhd-combo bundles unmodified copies of files from three projects.
 
 ## Changes
 
-None of the files above were modified. adhd-combo adds its own files around them: `.claude-plugin/`, `hooks/`, `skills/adhd-combo/`, `tests/`, `README.md`, `NOTICE.md` and `LICENSE`. Its hooks load the bundled `SKILL.md` files at session start in place of the upstream hooks.
+None of the files above were modified. adhd-combo adds its own files around them: `.claude-plugin/`, `hooks/`, `scripts/`, `skills/adhd-combo/`, `tests/`, `README.md`, `NOTICE.md` and `LICENSE`. Its hooks load the bundled `SKILL.md` files at session start in place of the upstream hooks.
