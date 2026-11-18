@@ -1,3 +1,8 @@
+---
+name: browser-use-fastlane
+description: "Fast browser automation for public, no-login web tasks via browser-use on oci-dev-01: about 3-7 seconds per task instead of a minute. Use for public pages needing a real browser; never for logged-in, account, or payment tasks."
+---
+
 # Browser-Use Fast Lane (oci-dev-01)
 
 Fast browser automation for PUBLIC, no-login web tasks, running browser-use 1.0.6
