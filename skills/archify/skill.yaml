@@ -1,0 +1,5 @@
+name: archify
+title: Archify
+description: "Create validated architecture, workflow, sequence, data-flow, lifecycle/state, ERD, class, tree, timeline, and waterfall diagrams as explorable standalone HTML with dark/light themes and image/SVG/WebM export. Use when a diagram, explainer, or codebase visual walkthrough is wanted."
+category: "Design"
+include_in_prompt: false
