@@ -141,6 +141,10 @@ Then commit the repo's `.claude/` and push.
 - Your other skills and settings stay as they are. Same-named skills are never overwritten.
 - If the plugin is also installed on your machine, the repo copy stays quiet, so the rules load once.
 
+### Option B2 — GitHub Copilot, offline / company-restricted (ZIP install)
+
+If Copilot cannot reach github.com, download this repo as a ZIP, extract it, and follow **[INSTALL_COPILOT.md](INSTALL_COPILOT.md)**. It includes a paste-ready prompt for Copilot itself, plus installer scripts (`scripts/install-skills.sh` / `scripts/install-skills.ps1`) that **check first**: missing skills are added, outdated skills are updated to the repo version (old copy backed up), identical skills are skipped, and skills you already have from elsewhere are never touched. The core-instructions snippet for Copilot lives in `copilot/copilot-instructions.snippet.md`.
+
 ### Option C — Pick individual skills (any agent)
 
 Every skill is a self-contained folder under `skills/<name>/` with a `SKILL.md` at its root. Copy the folders you want into wherever your agent reads skills from — e.g. `~/.claude/skills/` for Claude Code, your agent's custom-skills directory, or import them into OpenMausBot per bot via its skills API (`POST /api/bots/<botId>/skills`, then enable each one). Skills marked user-invoked in their frontmatter only run when you call them; the rest trigger on their description.
@@ -170,7 +174,9 @@ Every skill is a self-contained folder under `skills/<name>/` with a `SKILL.md` 
 .claude-plugin/   marketplace.json + plugin.json (name: adhd-combo, v1.1.0)
 skills/           all 42 skills, one folder each, SKILL.md at the root
 hooks/            SessionStart / SubagentStart injection for the always-on core
-scripts/          add-to-repo.py — copies the core into a repo's .claude/ for cloud sessions
+scripts/          add-to-repo.py (cloud sessions) + install-skills.sh/.ps1 (Copilot / Agent Skills installer)
+copilot/          copilot-instructions.snippet.md — the always-on core as a Copilot instructions block
+INSTALL_COPILOT.md  offline ZIP install guide for GitHub Copilot, incl. paste-ready prompt
 tests/            hook-output and add-to-repo tests
 third_party/      upstream licenses for the vendored originals
 NOTICE.md         provenance for the original bundle (see also Credits below)
