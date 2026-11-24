@@ -34,7 +34,8 @@ param(
   [string]$BackupDir = "",
   [string[]]$Only = @(),
   [string[]]$Exclude = @(),
-  [switch]$WithInstructions
+  [switch]$WithInstructions,
+  [switch]$VSCode
 )
 
 $ErrorActionPreference = "Stop"
@@ -46,7 +47,9 @@ if (-not (Test-Path $SrcSkills -PathType Container)) {
   exit 2
 }
 
-if ($Project) { $Target = Join-Path $Project ".github\skills" }
+if ($Project) { $Target = Join-Path $Project ".github\skills"; $Scope = "PROJECT - only the workspace at $Project" }
+elseif ($Target) { $Scope = "CUSTOM target" }
+else { $Scope = "PERSONAL - user level, applies to ALL VS Code workspaces" }
 if (-not $Target) { $Target = Join-Path $HOME ".copilot\skills" }
 if (-not $BackupDir) { $BackupDir = Join-Path (Split-Path -Parent $Target) "skills-backup" }
 $Stamp = Get-Date -Format "yyyyMMdd-HHmmss"
@@ -67,6 +70,7 @@ function Get-SkillHash($Dir) {
 
 Write-Host "Source : $SrcSkills"
 Write-Host "Target : $Target"
+Write-Host "Scope  : $Scope"
 if ($ReportOnly) { Write-Host "Mode   : check only (nothing will be changed)" }
 Write-Host ""
 
@@ -150,6 +154,22 @@ Write-Host "Summary: $count repo skills checked | added:$added updated:$updated 
 if ($addedList.Count) { Write-Host "  added:   $($addedList -join ' ')" }
 if ($updatedList.Count) { Write-Host "  updated: $($updatedList -join ' ')" }
 Write-Host "Skills already in the target that are not in this repo were left untouched."
+
+# VS Code check (personal installs, or with -VSCode): Agent Skills are GA and
+# on by default in VS Code >= 1.109 (Jan 2026). Latest is best.
+if ($VSCode -or -not $Project) {
+  Write-Host ""
+  $codeCmd = Get-Command code -ErrorAction SilentlyContinue
+  if ($codeCmd) {
+    $v = (& code --version | Select-Object -First 1)
+    Write-Host "VS Code: $v"
+    if ($v -match "^(\d+)\.(\d+)") {
+      if ([int]$Matches[1] -gt 1 -or ([int]$Matches[1] -eq 1 -and [int]$Matches[2] -ge 109)) {
+        Write-Host "  OK - Agent Skills supported and enabled by default."
+      } else { Write-Host "  WARNING - VS Code < 1.109: update VS Code, Agent Skills may not load." }
+    }
+  } else { Write-Host "VS Code: 'code' not on PATH here - on the target machine use VS Code >= 1.109 (latest recommended)." }
+}
 
 if ($failed -gt 0 -or $verifyFail -gt 0) { exit 1 }
 if ($Check -and ($added -gt 0 -or $updated -gt 0)) { exit 1 }

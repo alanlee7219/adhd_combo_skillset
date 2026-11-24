@@ -4,6 +4,13 @@ This repo is a library of **42 Agent Skills** — one folder per skill under `sk
 
 Use this guide when Copilot **cannot reach github.com** (e.g. a company-restricted environment). Everything Copilot needs is inside the downloaded ZIP.
 
+## VS Code: requirements and scope (read first)
+
+- **Version:** Agent Skills are generally available and **enabled by default in VS Code 1.109 (January 2026) and later**. Use the latest VS Code your company allows; on anything older the skills may silently not load. The installer and the verifier both check the `code` version and warn below 1.109. (Reference: VS Code docs, "Use Agent Skills in VS Code".)
+- **Scope — personal by default, so it applies to ALL workspaces:** this guide's default installs into your **personal** skills folder, `~/.copilot/skills/` (Windows: `%USERPROFILE%\.copilot\skills\`). Per the VS Code docs, personal skills live in your home directory and are available **across all workspaces** — they are *not* tied to any single project. The project location (`<project>/.github/skills/`) is the per-workspace option and is only used if you explicitly pass `--project` / `-Project`.
+- **One copy only:** VS Code also scans `~/.claude/skills/` and `~/.agents/skills/`. If you previously installed some of these skills there (or into a workspace), you'll get duplicates in the skills list. The verifier (§6) detects this; keep the copy in `~/.copilot/skills/` and remove the others.
+- **If skills don't show up:** start a **new chat session** (skills are scanned at session start), check via **Chat: Open Customizations → Skills** (personal skills appear under **User**), or type `/` in chat. Also confirm `chat.useAgentSkills` is not set to `false` in settings — a company managed-settings policy can disable it, in which case no install location will work until IT allows it.
+
 ---
 
 ## What you need
@@ -19,8 +26,8 @@ No Node.js, Python or package installs are required. The installer scripts use o
 
 | Scope | Location |
 |---|---|
-| Project (shared with the repo/team) | `<your-project>/.github/skills/<skill-name>/SKILL.md` |
-| Personal (just you, all projects) | `~/.copilot/skills/<skill-name>/SKILL.md` |
+| **Personal (default in this guide — all workspaces)** | `~/.copilot/skills/<skill-name>/SKILL.md` |
+| Project (one workspace only, shared with the repo/team) | `<your-project>/.github/skills/<skill-name>/SKILL.md` |
 
 Copilot also reads the legacy `.claude/skills` and `.agents/skills` locations; the installer can target any of them with `--target` / `-Target`. Pick **one** location — installing the same skill into two locations Copilot scans can load it twice.
 
@@ -38,28 +45,32 @@ Install the Agent Skills from the extracted folder <PATH-TO/adhd_combo_skillset-
 Rules:
 1. First CHECK what I already have. The target is ~/.copilot/skills (personal)
    — or <PROJECT>/.github/skills if I say project scope.
-2. For each folder in <PATH>/skills/ that contains a SKILL.md:
+2. Install at PERSONAL scope (~/.copilot/skills) so the skills apply to ALL
+   VS Code workspaces, not just one project, unless I explicitly say project.
+3. For each folder in <PATH>/skills/ that contains a SKILL.md:
    - If the skill is NOT in the target, copy the whole folder in.
    - If it IS in the target, compare every file. If identical, leave it alone.
      If any file differs, replace the target folder with the repo version,
      after copying the old version to a backup folder outside the skills
      directory (skills-backup/<today's date>/).
    - Never delete or modify any skill in the target that is not in this repo.
-3. If shell access is available, do this by running the repo's own script
+4. If shell access is available, do this by running the repo's own script
    instead of copying by hand:
    - macOS/Linux:  sh <PATH>/scripts/install-skills.sh [--project <PROJECT>]
    - Windows:      powershell -ExecutionPolicy Bypass -File <PATH>\scripts\install-skills.ps1 [-Project <PROJECT>]
-4. Afterwards VERIFY and report: how many skills were added, updated, already
+5. Afterwards VERIFY and report: how many skills were added, updated, already
    up to date; confirm the total from this repo is 42; and confirm each
    installed skill has a SKILL.md whose frontmatter name matches its folder.
-5. Do not access the internet. Everything needed is in the extracted folder.
+6. Do not access the internet. Everything needed is in the extracted folder.
+   Also run <PATH>/scripts/verify-install.sh (or verify-install.ps1 on
+   Windows) at the end and include its RESULT line in your report.
 ```
 
 ## 2. Scripted install (terminal)
 
 Run from anywhere; the script finds `skills/` relative to itself.
 
-**Personal scope (default):**
+**Personal scope (default — all VS Code workspaces):**
 
 ```sh
 # macOS / Linux
@@ -136,17 +147,32 @@ If company policy blocks running scripts, Copilot (agent mode) or you can do exa
 
 ## 6. Verify it worked
 
-1. Re-run the installer with `--check` / `-Check` — expect `added:0 updated:0` and exit code 0.
-2. In Copilot Chat, start a new session (skills are scanned at session start) and invoke a skill by name, e.g. ask for a `tdd` or `grilling` session, or type `/` and look for the skill names.
-3. Spot-check one folder: `~/.copilot/skills/tdd/SKILL.md` (or `<project>/.github/skills/tdd/SKILL.md`) exists and its first lines are YAML frontmatter starting with `name: tdd`.
+Run the standalone verifier — it checks completeness, the VS Code file-format spec, duplicates in other scanned locations, your VS Code version, and the `chat.useAgentSkills` setting:
+
+```sh
+sh scripts/verify-install.sh                      # personal scope
+sh scripts/verify-install.sh --workspace /path/to/a/workspace   # also check that workspace for duplicates
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\verify-install.ps1
+```
+
+Expect the last line to read `RESULT: PASS`. Then, in VS Code:
+
+1. Start a **new chat session** (skills are scanned at session start).
+2. Run **Chat: Open Customizations → Skills**: all 42 skills should be listed under **User** (personal) — visible from any workspace you open, which is how you confirm the all-workspaces scope took effect.
+3. Type `/` in chat and invoke one, e.g. `/tdd`, and give it a small task.
+4. Spot-check one folder: `~/.copilot/skills/tdd/SKILL.md` exists and its first lines are YAML frontmatter starting with `name: tdd`.
 
 ## 7. Troubleshooting
 
 | Symptom | Cause / fix |
 |---|---|
-| Skills don't appear in Copilot | Session started before install → start a new session. Or wrong nesting — `SKILL.md` must be directly in `skills/<name>/`, not one level deeper (common after manual ZIP copying: you copied the repo's `skills/` folder *into* an existing `skills/` folder). Re-run the installer to fix layout. |
+| Skills don't appear in Copilot | VS Code older than 1.109 → update. Session started before install → start a new session. `chat.useAgentSkills: false` (possibly company managed settings) → enable it / ask IT. Or wrong nesting — `SKILL.md` must be directly in `skills/<name>/`, not one level deeper (common after manual ZIP copying: you copied the repo's `skills/` folder *into* an existing `skills/` folder). Re-run the installer to fix layout. |
 | PowerShell: "running scripts is disabled" | Use the `-ExecutionPolicy Bypass -File ...` form in §2 (per-process only, changes no machine policy), or use the §5 manual fallback. |
-| A skill loads twice / behaves doubled | It's installed in two scanned locations (e.g. both `~/.copilot/skills` and the project's `.github/skills`, or an upstream plugin copy exists). Keep one copy; the installer only manages the target you point it at. |
+| A skill loads twice / behaves doubled | It's installed in two scanned locations (e.g. both `~/.copilot/skills` and `~/.claude/skills`, or a workspace's `.github/skills`). Run the verifier (§6) — it lists duplicates. Keep the personal copy in `~/.copilot/skills/`; the installer only manages the target you point it at. |
+| Skills work in one workspace but not another | They were installed at project scope (`.github/skills` inside one repo). Re-run the installer with no `--project` flag to install at personal scope (`~/.copilot/skills`), which applies to all workspaces. |
 | Installer reports `WOULD UPDATE` for a skill you edited locally | Your local edits differ from the repo version. Updating overwrites them — your old copy is preserved in `skills-backup/<timestamp>/` unless you passed `--no-backup`. To keep local edits instead, exclude it: `--exclude <name>`. |
 | `diff` errors / weird characters in paths (Windows, sh script) | Use the PowerShell script on Windows; the `sh` script targets macOS/Linux. |
 | Copilot says it can't find the repo / asks to browse GitHub | It is working from the repo name instead of the local files. Re-state the extracted folder's absolute path and rule 5 of the §1 prompt: no internet, local files only. |

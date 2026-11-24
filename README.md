@@ -143,7 +143,7 @@ Then commit the repo's `.claude/` and push.
 
 ### Option B2 — GitHub Copilot, offline / company-restricted (ZIP install)
 
-If Copilot cannot reach github.com, download this repo as a ZIP, extract it, and follow **[INSTALL_COPILOT.md](INSTALL_COPILOT.md)**. It includes a paste-ready prompt for Copilot itself, plus installer scripts (`scripts/install-skills.sh` / `scripts/install-skills.ps1`) that **check first**: missing skills are added, outdated skills are updated to the repo version (old copy backed up), identical skills are skipped, and skills you already have from elsewhere are never touched. The core-instructions snippet for Copilot lives in `copilot/copilot-instructions.snippet.md`.
+If Copilot cannot reach github.com, download this repo as a ZIP, extract it, and follow **[INSTALL_COPILOT.md](INSTALL_COPILOT.md)**. The default install is **personal scope (`~/.copilot/skills`)**, so in VS Code (1.109+, latest recommended) the skills apply to **all workspaces**, not just one project; `scripts/verify-install.sh` / `.ps1` run the full post-install check. It includes a paste-ready prompt for Copilot itself, plus installer scripts (`scripts/install-skills.sh` / `scripts/install-skills.ps1`) that **check first**: missing skills are added, outdated skills are updated to the repo version (old copy backed up), identical skills are skipped, and skills you already have from elsewhere are never touched. The core-instructions snippet for Copilot lives in `copilot/copilot-instructions.snippet.md`.
 
 ### Option C — Pick individual skills (any agent)
 

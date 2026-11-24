@@ -23,6 +23,9 @@
 #   --backup-dir DIR Where backups go. Default: <target-parent>/skills-backup
 #   --only a,b,c     Only process these skill names.
 #   --exclude a,b,c  Skip these skill names.
+#   --vscode         Personal install for VS Code: target ~/.copilot/skills
+#                    (applies to ALL workspaces) + check the `code` version
+#                    afterwards (Agent Skills need VS Code >= 1.109).
 #   --with-instructions   (project mode only) Merge the adhd-combo core block
 #                    into DIR/.github/copilot-instructions.md (marked block,
 #                    replaced on re-run, the rest of the file is untouched).
@@ -41,6 +44,7 @@ BACKUP_DIR=""
 ONLY=""
 EXCLUDE=""
 WITH_INSTRUCTIONS=0
+VSCODE=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -54,6 +58,7 @@ while [ $# -gt 0 ]; do
     --only) ONLY=$2; shift 2 ;;
     --exclude) EXCLUDE=$2; shift 2 ;;
     --with-instructions) WITH_INSTRUCTIONS=1; shift ;;
+    --vscode) VSCODE=1; shift ;;
     -h|--help) sed -n '2,40p' "$0"; exit 0 ;;
     *) echo "Unknown argument: $1" >&2; exit 2 ;;
   esac
@@ -68,8 +73,12 @@ fi
 
 if [ -n "$PROJECT" ]; then
   TARGET="$PROJECT/.github/skills"
+  SCOPE="PROJECT - only the workspace at $PROJECT"
 elif [ -z "$TARGET" ]; then
   TARGET="$HOME/.copilot/skills"
+  SCOPE="PERSONAL - user level, applies to ALL VS Code workspaces"
+else
+  SCOPE="CUSTOM target"
 fi
 [ -z "$BACKUP_DIR" ] && BACKUP_DIR="$(dirname -- "$TARGET")/skills-backup"
 STAMP=$(date +%Y%m%d-%H%M%S)
@@ -82,6 +91,7 @@ in_list() { # name, comma-list
 
 echo "Source : $SRC_SKILLS"
 echo "Target : $TARGET"
+echo "Scope  : $SCOPE"
 [ "$REPORT_ONLY" = 1 ] && echo "Mode   : check only (nothing will be changed)"
 echo ""
 
@@ -177,6 +187,26 @@ echo "Summary: $COUNT repo skills checked | added:$ADDED updated:$UPDATED up-to-
 [ -n "$ADDED_LIST" ] && echo "  added:  $ADDED_LIST"
 [ -n "$UPDATED_LIST" ] && echo "  updated:$UPDATED_LIST"
 echo "Skills already in the target that are not in this repo were left untouched."
+
+# VS Code check (personal installs, or when --vscode is passed): Agent Skills
+# are GA and on by default in VS Code >= 1.109 (Jan 2026). Latest is best.
+if [ "$VSCODE" = 1 ] || [ -z "$PROJECT" ]; then
+  echo ""
+  if command -v code >/dev/null 2>&1; then
+    V=$(code --version 2>/dev/null | head -n 1)
+    echo "VS Code: $V"
+    MAJ=$(echo "$V" | cut -d. -f1); MIN=$(echo "$V" | cut -d. -f2)
+    case "$MAJ$MIN" in *[!0-9]*|'') echo "  (could not parse version - need >= 1.109)" ;;
+      *) if [ "$MAJ" -gt 1 ] || { [ "$MAJ" -eq 1 ] && [ "$MIN" -ge 109 ]; }; then
+           echo "  OK - Agent Skills supported and enabled by default."
+         else
+           echo "  WARNING - VS Code < 1.109: update VS Code, Agent Skills may not load."
+         fi ;;
+    esac
+  else
+    echo "VS Code: 'code' not on PATH here - on the target machine use VS Code >= 1.109 (latest recommended)."
+  fi
+fi
 
 if [ "$FAILED" -gt 0 ] || [ "$VERIFY_FAIL" -gt 0 ]; then
   exit 1
