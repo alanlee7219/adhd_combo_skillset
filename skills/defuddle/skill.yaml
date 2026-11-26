@@ -1,0 +1,5 @@
+name: defuddle
+title: Defuddle
+description: "Extract clean Markdown from HTML pages with Defuddle CLI."
+category: "Work and knowledge"
+include_in_prompt: false

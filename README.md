@@ -1,6 +1,6 @@
 # adhd_combo_skillset
 
-A personal, batteries-included **skill library for AI coding agents** — 43 skills in one repo, built around an always-on core that changes *how* the agent replies and writes code in every session.
+A personal, batteries-included **skill library for AI coding agents** — 50 skills in one repo, built around an always-on core that changes *how* the agent replies and writes code in every session.
 
 It started as one thing: a Claude Code plugin that keeps **i-have-adhd + caveman + ponytail** switched on at all times. It has since grown into the single source of truth for every skill its owner actually uses — the original combo, Matt Pocock's engineering workflow set, and a handful of hand-picked standalone skills — all vendored here so they can be installed, copied and kept in sync across Claude Code, Muse, OpenMausBot bots and other agents that read `SKILL.md` files.
 
@@ -18,13 +18,13 @@ It started as one thing: a Claude Code plugin that keeps **i-have-adhd + caveman
 | Three style skills would fight each other | **adhd-combo** is the referee: one clash rule set, i-have-adhd wins on reply shape |
 | "Vibe coding" falls apart on real projects | The **Matt Pocock set** adds the missing engineering loop: spec, tickets, TDD, code review, domain modelling, triage, handoffs |
 | Skills scattered across a dozen upstream repos | **One repo, vendored copies, pinned provenance** — clone it and you have the whole working set, offline, versioned |
-| Same setup repeated on every machine / bot | Copy a skill folder, install the plugin, or run `scripts/add-to-repo.py` — the same 43 skills everywhere |
+| Same setup repeated on every machine / bot | Copy a skill folder, install the plugin, or run `scripts/add-to-repo.py` — the same 50 skills everywhere |
 
 Nothing here phones home. The hooks are POSIX `sh`, there is no Node.js dependency for the core plugin, and every skill is plain Markdown you can read before you trust it.
 
 ---
 
-## What's inside — all 43 skills
+## What's inside — all 50 skills
 
 ### 1. The always-on core (4)
 
@@ -107,6 +107,20 @@ A complete loop for taking real work from idea to shipped, reviewed code. Start 
 | **browser-use-fastlane** | Fast browser automation for **public, no-login** web tasks via browser-use (seconds per task instead of ~a minute). Never for logged-in, account or payment work | Written for this repo |
 | **markitdown** | Wrapper for Microsoft MarkItDown: converts PDF, Word, Excel, PowerPoint, images, audio, HTML and EPub files to Markdown for LLM use, notes and indexing (tool installed via pip, not vendored; first pass only for precision tables) | [microsoft/markitdown](https://github.com/microsoft/markitdown) |
 
+### 5. Obsidian official connectors (7)
+
+Official Agent Skills from Obsidian (2026-11-25), MIT. Teach agents to work with Obsidian notes in their open formats. Note: `obsidian-cli` needs the desktop app running locally, so it does not work in cloud agents such as Muse; `obsidian-headless` syncs the vault into the cloud agent's environment — check the privacy trade-off before using it on a personal vault.
+
+| Skill | What it does | Source |
+|---|---|---|
+| **obsidian-markdown** | Create and edit Obsidian Flavored Markdown: wikilinks, embeds, callouts, properties | [obsidianmd/obsidian-skills](https://github.com/obsidianmd/obsidian-skills) |
+| **obsidian-bases** | Create and edit Obsidian Bases (`.base`): views, filters, formulas, summaries | [obsidianmd/obsidian-skills](https://github.com/obsidianmd/obsidian-skills) |
+| **json-canvas** | Create and edit JSON Canvas (`.canvas`): nodes, edges, groups, connections | [obsidianmd/obsidian-skills](https://github.com/obsidianmd/obsidian-skills) |
+| **obsidian-cli** | Interact with vaults via the Obsidian CLI (desktop app must be running) | [obsidianmd/obsidian-skills](https://github.com/obsidianmd/obsidian-skills) |
+| **obsidian-headless** | Sync and publish vaults from the command line without the desktop app | [obsidianmd/obsidian-skills](https://github.com/obsidianmd/obsidian-skills) |
+| **defuddle** | Extract clean Markdown from web pages with the Defuddle CLI | [obsidianmd/obsidian-skills](https://github.com/obsidianmd/obsidian-skills) |
+| **knap** | Render Markdown templates from JSON/CSV data with the Knap CLI | [obsidianmd/obsidian-skills](https://github.com/obsidianmd/obsidian-skills) |
+
 ---
 
 ## Install & use
@@ -166,14 +180,14 @@ Every skill is a self-contained folder under `skills/<name>/` with a `SKILL.md` 
 
 - `hooks/hooks.json` runs `hooks/inject.sh` on SessionStart (startup, resume, clear, compact). One hook per skill keeps each output under Claude Code's 10,000-character limit per hook.
 - Subagents get caveman and ponytail through SubagentStart.
-- Only the core is forced on. Everything else is invoked or triggered on demand, so the 43-skill library costs no context until you use it.
+- Only the core is forced on. Everything else is invoked or triggered on demand, so the 50-skill library costs no context until you use it.
 - `sh tests/test-hooks.sh` checks every hook output. `python3 tests/test_add_to_repo.py` checks the repo copy script.
 
 ## Repository layout
 
 ```
 .claude-plugin/   marketplace.json + plugin.json (name: adhd-combo, v1.1.0)
-skills/           all 43 skills, one folder each, SKILL.md at the root
+skills/           all 50 skills, one folder each, SKILL.md at the root
 hooks/            SessionStart / SubagentStart injection for the always-on core
 scripts/          add-to-repo.py (cloud sessions) + install-skills.sh/.ps1 (Copilot / Agent Skills installer)
 copilot/          copilot-instructions.snippet.md — the always-on core as a Copilot instructions block
@@ -211,15 +225,16 @@ Unofficial bundle. Not affiliated with or endorsed by the upstream authors. "Cav
 | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) | karpathy-guidelines | See upstream |
 | [tt-a1i/archify](https://github.com/tt-a1i/archify) | archify | See folder (`LICENSE`, `NOTICE`) |
 | [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill) | security-audit | See upstream |
+| [obsidianmd/obsidian-skills](https://github.com/obsidianmd/obsidian-skills) | obsidian-markdown, obsidian-bases, json-canvas, obsidian-cli, obsidian-headless, defuddle, knap | MIT |
 
 Exact commits and license texts for the original three: [NOTICE.md](NOTICE.md) and `third_party/`. Everything else in this repo is MIT ([LICENSE](LICENSE)).
 
 ## 中文快速說明
 
-呢個 repo 係一套個人 AI agent 技能庫，共 **43 個 skills**，核心係常開組合：
+呢個 repo 係一套個人 AI agent 技能庫，共 **50 個 skills**，核心係常開組合：
 
 1. **常開核心**：每個 session 自動開 i-have-adhd（回覆結構：下一步行先）、caveman（措辭精簡）、ponytail（最小而完整嘅 code 改動）；三者衝突時跟 i-have-adhd。用 `normal mode` 全部關，`/adhd-combo` 全部重開。
 2. **工程流程（Matt Pocock 27 個）**：`ask-matt` 做路由器；`wayfinder`／`grilling` 規劃 → `to-spec` → `to-tickets` → `implement`／`tdd` → `code-review` → `pr` → `handoff`。
-3. **獨立精選**：karpathy-guidelines（防 LLM 常見 coding 錯誤）、archify（架構圖 HTML）、security-audit（安全審計）、browser-use-fastlane（公開網頁快速自動化）、markitdown（文件轉 Markdown）。
+3. **獨立精選**：karpathy-guidelines（防 LLM 常見 coding 錯誤）、archify（架構圖 HTML）、security-audit（安全審計）、browser-use-fastlane（公開網頁快速自動化）、markitdown（文件轉 Markdown）、Obsidian 官方 7 個（筆記／Bases／Canvas／CLI／Headless／網頁轉 Markdown／模板生成）。
 
 安裝：Claude Code 分兩次輸入上面 Option A 兩行指令，再開新 session；雲端 session 用 `scripts/add-to-repo.py` 複製入 repo 嘅 `.claude/`；其他 agent 直接抄 `skills/<name>/` 資料夾即可。
