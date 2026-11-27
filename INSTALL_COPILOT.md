@@ -1,6 +1,6 @@
 # Installing this skillset in GitHub Copilot (offline / restricted network)
 
-This repo is a library of **43 Agent Skills** — one folder per skill under `skills/`, each with a `SKILL.md` at its root (frontmatter `name` + `description`, which is the format GitHub Copilot reads). No skill needs internet access, an API key, or a build step.
+This repo is a library of **51 Agent Skills** — one folder per skill under `skills/`, each with a `SKILL.md` at its root (frontmatter `name` + `description`, which is the format GitHub Copilot reads). No skill needs internet access, an API key, or a build step.
 
 Use this guide when Copilot **cannot reach github.com** (e.g. a company-restricted environment). Everything Copilot needs is inside the downloaded ZIP.
 
@@ -59,7 +59,7 @@ Rules:
    - macOS/Linux:  sh <PATH>/scripts/install-skills.sh [--project <PROJECT>]
    - Windows:      powershell -ExecutionPolicy Bypass -File <PATH>\scripts\install-skills.ps1 [-Project <PROJECT>]
 5. Afterwards VERIFY and report: how many skills were added, updated, already
-   up to date; confirm the total from this repo is 43; and confirm each
+   up to date; confirm the total from this repo is 51; and confirm each
    installed skill has a SKILL.md whose frontmatter name matches its folder.
 6. Do not access the internet. Everything needed is in the extracted folder.
    Also run <PATH>/scripts/verify-install.sh (or verify-install.ps1 on
@@ -107,7 +107,7 @@ powershell -ExecutionPolicy Bypass -File scripts\install-skills.ps1 -Check
 
 ## 3. Exactly what the installer does (the check you asked for)
 
-For every one of the 43 skills, on every run:
+For every one of the 51 skills, on every run:
 
 | State in target | Action |
 |---|---|
@@ -116,7 +116,7 @@ For every one of the 43 skills, on every run:
 | Present, any file differs (older version, edited copy) | **UPDATED** — old folder first copied to `<skills-parent>/skills-backup/<timestamp>/`, then replaced with the repo version |
 | Present in target but **not** in this repo | **UNTOUCHED** — your other skills are never deleted or modified |
 
-Comparison is a full recursive diff (sh) / per-file SHA-256 (PowerShell) — not timestamps, which ZIP extraction makes meaningless. Re-running the installer when everything is current reports 43 × `UP TO DATE` and changes nothing, so the safe way to "update to the latest version" later is simply: download a fresh ZIP, extract, re-run the same command.
+Comparison is a full recursive diff (sh) / per-file SHA-256 (PowerShell) — not timestamps, which ZIP extraction makes meaningless. Re-running the installer when everything is current reports 51 × `UP TO DATE` and changes nothing, so the safe way to "update to the latest version" later is simply: download a fresh ZIP, extract, re-run the same command.
 
 After copying, the script verifies every installed skill: `SKILL.md` exists and its frontmatter `name` matches the folder name (a Copilot requirement). It prints a summary (`added / updated / up-to-date / failed / verify-failures`) and exits non-zero if anything failed.
 
@@ -138,11 +138,11 @@ This appends the block from `copilot/copilot-instructions.snippet.md` to `<proje
 
 If company policy blocks running scripts, Copilot (agent mode) or you can do exactly what the script does, by hand:
 
-1. List the folders in the repo's `skills/` — there are 43, each containing `SKILL.md`.
+1. List the folders in the repo's `skills/` — there are 51, each containing `SKILL.md`.
 2. List the folders already in the target skills directory. Note them; anything there that is not in step 1's list must not be touched.
 3. For each repo skill missing from the target: copy the entire folder into the target.
 4. For each repo skill already present: compare file by file (names, then contents/hashes). Identical → leave it. Different → copy the present folder to a backup location outside the skills directory, delete the present folder, copy the repo folder in.
-5. Verify: target now contains all 43 repo skill folders, each with `SKILL.md` directly inside, and each `SKILL.md`'s frontmatter `name` equals its folder name.
+5. Verify: target now contains all 51 repo skill folders, each with `SKILL.md` directly inside, and each `SKILL.md`'s frontmatter `name` equals its folder name.
 6. Restart the Copilot session so it rescans the skills directories.
 
 ## 6. Verify it worked
@@ -161,7 +161,7 @@ powershell -ExecutionPolicy Bypass -File scripts\verify-install.ps1
 Expect the last line to read `RESULT: PASS`. Then, in VS Code:
 
 1. Start a **new chat session** (skills are scanned at session start).
-2. Run **Chat: Open Customizations → Skills**: all 43 skills should be listed under **User** (personal) — visible from any workspace you open, which is how you confirm the all-workspaces scope took effect.
+2. Run **Chat: Open Customizations → Skills**: all 51 skills should be listed under **User** (personal) — visible from any workspace you open, which is how you confirm the all-workspaces scope took effect.
 3. Type `/` in chat and invoke one, e.g. `/tdd`, and give it a small task.
 4. Spot-check one folder: `~/.copilot/skills/tdd/SKILL.md` exists and its first lines are YAML frontmatter starting with `name: tdd`.
 
